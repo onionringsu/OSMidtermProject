@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nonlinear System Solver</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <div class="hero-card">
+      <h1>Nonlinear System Solver and Verifier</h1>
+      <p>
+        Enter two equations in terms of <strong>x</strong> and <strong>y</strong>.
+        Use <strong>*</strong> for multiplication and <strong>^</strong> for powers.
+      </p>
+      <div class="example">
+        Example:
+        <span>x^2 + y^2 = 5</span>
+        <span>3*x^2 - 2*y^2 = 10</span>
+      </div>
+    </div>
+
+    <div class="panel input-panel">
+      <h2>Equation Input</h2>
+
+      <label for="eq1">Equation 1</label>
+      <input id="eq1" type="text" placeholder="e.g. x^2 + y^2 = 5" />
+
+      <label for="eq2">Equation 2</label>
+      <input id="eq2" type="text" placeholder="e.g. 3*x^2 - 2*y^2 = 10" />
+
+      <div class="btn-row">
+        <button id="solveBtn" class="btn primary">Solve System</button>
+        <button id="clearBtn" class="btn secondary">Clear</button>
+      </div>
+
+      <p class="note">
+        Supported examples: <code>x^2 + y^2 = 5</code>,
+        <code>x + y^2 = 7</code>, <code>sin(x) + y = 1</code>
+      </p>
+    </div>
+
+<div class="panel result-card">
+  <h2>Solution Process</h2>
+  <div id="steps" class="result-content muted">No steps yet.</div>
+</div>
+
+    <div class="results-grid">
+      <div class="panel result-card">
+        <h2>Detected Type</h2>
+        <div id="detectedType" class="result-content muted">Waiting for input...</div>
+      </div>
+
+      <div class="panel result-card">
+        <h2>Computed Answers</h2>
+        <div id="answers" class="result-content muted">No solutions yet.</div>
+      </div>
+
+      <div class="panel result-card">
+        <h2>Checking</h2>
+        <div id="verification" class="result-content muted">No checking yet.</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
