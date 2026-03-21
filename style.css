@@ -267,12 +267,16 @@ input:focus{
 
 .input-panel{
   position: relative;
+  margin-bottom: 22px;
+  padding-top: 40px; /* 🔥 IMPORTANT */
 }
 
 .card-author-corner{
   position: absolute;
-  top: 18px;
+  top: 12px;
   right: 20px;
+  z-index: 10;
+
   font-size: 11px;
   line-height: 1.2;
   text-align: right;
