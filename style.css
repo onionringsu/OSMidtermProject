@@ -283,7 +283,3 @@ input:focus{
   opacity: 0.7;
   font-weight: 600;
 }
-
-.card-author-corner{
-  color: red !important;
-}
