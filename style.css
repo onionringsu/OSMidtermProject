@@ -161,9 +161,9 @@ input:focus{
 
 .results-grid{
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  align-items: start;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin-top: 18px;
 }
 
 .result-card{
@@ -219,9 +219,63 @@ input:focus{
 
 @media (min-width: 820px){
   .results-grid{
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(3, 1fr);
     align-items: start;
   }
 }
+
+.card-author-header{
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 0px;
+  line-height: 1;
+  text-align: right;
+}
+
+.card-author{
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 0px;
+  line-height: 1;
+  text-align: right;
+}
+
+.hero-card{
+  position: relative;
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:10px;
+}
+
+.card-header h2{
+  margin: 0;
+}
+
+.card-author-mini{
+  font-size:9px;
+  line-height:1.2;
+  text-align:right;
+  font-weight:600;
+  opacity:.7;
+  white-space:normal;
+}
+
+.input-panel{
+  position: relative;
+}
+
+.card-author-corner{
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: right;
+  opacity: 0.7;
+  font-weight: 600;
 }
