@@ -161,8 +161,9 @@ input:focus{
 
 .results-grid{
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  align-items: start;
 }
 
 .result-card{
@@ -218,7 +219,9 @@ input:focus{
 
 @media (min-width: 820px){
   .results-grid{
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
     align-items: start;
   }
+}
 }
