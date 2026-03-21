@@ -268,7 +268,7 @@ input:focus{
 .input-panel{
   position: relative;
   margin-bottom: 22px;
-  padding-top: 40px; /* 🔥 IMPORTANT */
+  padding-top: 20p;
 }
 
 .card-author-corner{
