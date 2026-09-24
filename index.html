@@ -1,95 +1,2426 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>System Of Non-linear Equation – Quadratic Equation</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spider-Verse CPU Scheduler</title>
+<style>
+:root {
+  /* Spider-Man Color Palette */
+  --spidey-red: #E23636;
+  --spidey-red-dark: #B91C1C;
+  --spidey-red-light: #FEE2E2;
+  --spidey-blue: #1E3A8A;
+  --spidey-blue-dark: #1E40AF;
+  --spidey-blue-light: #DBEAFE;
+  --spidey-black: #0F0F0F;
+  --spidey-gray: #1F1F1F;
+  --spidey-web: #2A2A2A;
+  --spidey-white: #FFFFFF;
+  --spidey-gold: #F59E0B;
+  --spidey-silver: #9CA3AF;
+  
+  /* Theme Mapping */
+  --bg: var(--spidey-black);
+  --panel: var(--spidey-gray);
+  --panel-soft: #2A2A2A;
+  
+  --text: var(--spidey-white);
+  --text-secondary: #E5E5E5;
+  --text-tertiary: #A3A3A3;
+  --text-muted: #737373;
+  
+  --border: #333333;
+  --border-strong: #404040;
+  --border-subtle: #262626;
+  
+  --accent: var(--spidey-red);
+  --accent-hover: var(--spidey-red-dark);
+  --accent-soft: rgba(226, 54, 54, 0.15);
+  --accent-subtle: rgba(226, 54, 54, 0.08);
+  
+  --danger: #EF4444;
+  --danger-soft: rgba(239, 68, 68, 0.15);
+  
+  --good: #10B981;
+  --good-soft: rgba(16, 185, 129, 0.15);
+  
+  --warning: var(--spidey-gold);
+  --warning-soft: rgba(245, 158, 11, 0.15);
+  
+  /* Spider-Verse Process Colors */
+  --process-1: #E23636;
+  --process-2: #3B82F6;
+  --process-3: #10B981;
+  --process-4: #F59E0B;
+  --process-5: #8B5CF6;
+  --process-6: #EC4899;
+  --process-7: #06B6D4;
+  --process-8: #F97316;
+  
+  /* Shadows - darker for dark theme */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 20px rgba(226, 54, 54, 0.3);
+  
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+  
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  
+  /* Typography */
+  --font-sans: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --font-comic: 'Comic Neue', 'Comic Sans MS', cursive;
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(226, 54, 54, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(30, 58, 138, 0.1) 0%, transparent 50%),
+    repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,0.02) 35px, rgba(255,255,255,0.02) 70px);
+  color: var(--text);
+  line-height: 1.6;
+  font-size: var(--text-base);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Web Pattern Overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30L30 0z' fill='none' stroke='%23ffffff' stroke-width='0.5' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: var(--space-6);
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero - Spider-Verse Style */
+.hero {
+  position: relative;
+  margin-bottom: var(--space-6);
+  padding: var(--space-6);
+  background: linear-gradient(135deg, var(--spidey-red) 0%, var(--spidey-blue) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "🕷️";
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  font-size: 180px;
+  opacity: 0.1;
+  transform: rotate(-15deg);
+  filter: grayscale(1);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(255,255,255,0.03) 50px, rgba(255,255,255,0.03) 51px),
+    repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(255,255,255,0.03) 50px, rgba(255,255,255,0.03) 51px);
+  pointer-events: none;
+}
+
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.spider-icon {
+  width: 20px;
+  height: 20px;
+  animation: swing 3s ease-in-out infinite;
+}
+
+@keyframes swing {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3), 0 0 10px #10B981;
+  animation: pulse-spidey 2s ease-in-out infinite;
+}
+
+@keyframes pulse-spidey {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+  color: white;
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  backdrop-filter: blur(10px);
+}
+
+.status-pill span {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: currentColor;
+}
+
+.hero h1 {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: var(--space-3);
+  color: white;
+  text-shadow: 0 4px 8px rgba(0,0,0,0.3), 0 0 40px rgba(226, 54, 54, 0.5);
+  position: relative;
+  z-index: 1;
+}
+
+.hero p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: var(--text-base);
+  max-width: 600px;
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.algorithm-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+  position: relative;
+  z-index: 1;
+}
+
+.algorithm-tags span {
+  padding: var(--space-2) var(--space-3);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+  color: white;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  transition: var(--transition-fast);
+  backdrop-filter: blur(10px);
+}
+
+.algorithm-tags span:hover {
+  background: rgba(226, 54, 54, 0.8);
+  border-color: var(--spidey-red);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(226, 54, 54, 0.4);
+}
+
+/* Main Layout */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(380px, 32%) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: stretch;
+}
+
+/* Cards - Dark Theme */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--spidey-red), var(--spidey-blue));
+}
+
+.card h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--text);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.card h2::before {
+  content: "🕸️";
+  font-size: 20px;
+  filter: grayscale(1) brightness(2);
+}
+
+select[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.field label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.algorithm-control {
+  display: flex;
+  align-items: stretch;
+  border: 2px solid var(--spidey-red);
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--spidey-red) 0%, var(--spidey-red-dark) 100%);
+  overflow: hidden;
+  transition: var(--transition-fast);
+  box-shadow: 0 0 0 0 rgba(226, 54, 54, 0);
+}
+
+.algorithm-control:hover {
+  box-shadow: 0 0 0 4px rgba(226, 54, 54, 0.2), 0 0 20px rgba(226, 54, 54, 0.2);
+}
+
+.algorithm-icon {
+  width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--spidey-red);
+  color: white;
+  font-size: 24px;
+}
+
+.algorithm-control select {
+  flex: 1;
+  min-height: 48px;
+  padding: 0 var(--space-4);
+  padding-right: 40px;
+  border: 0;
+  background: transparent;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: white;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
+
+.algorithm-control select option {
+  background: #1f1f1f;
+  color: white;
+  padding: 8px;
+}
+
+.algorithm-hint {
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  padding-left: var(--space-2);
+}
+
+/* Settings */
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.setting-card {
+  padding: var(--space-4);
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+}
+
+.setting-card.active {
+  background: rgba(226, 54, 54, 0.1);
+  border-color: var(--spidey-red);
+  box-shadow: 0 0 0 3px rgba(226, 54, 54, 0.1), 0 0 15px rgba(226, 54, 54, 0.2);
+}
+
+.setting-card.inactive {
+  opacity: 0.4;
+}
+
+.setting-card label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.setting-card input,
+.setting-card select {
+  width: 100%;
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: #262626;
+  color: var(--text);
+  font-size: var(--text-sm);
+  transition: var(--transition-fast);
+}
+
+.setting-card input:focus,
+.setting-card select:focus {
+  outline: none;
+  border-color: var(--spidey-red);
+  box-shadow: 0 0 0 3px rgba(226, 54, 54, 0.2);
+}
+
+.setting-card.inactive input,
+.setting-card.inactive select {
+  background: #1a1a1a;
+  cursor: not-allowed;
+}
+
+.setting-card small {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+}
+
+/* Process Section */
+.process-section {
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border);
+}
+
+.process-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.process-header > div:first-child {
+  flex: 1;
+}
+
+.process-header h3 {
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-1);
+}
+
+.process-header p {
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+}
+
+.process-count {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  transition: var(--transition-fast);
+}
+
+.process-count.has-processes {
+  background: rgba(226, 54, 54, 0.2);
+  border-color: var(--spidey-red);
+  color: var(--spidey-red);
+  box-shadow: 0 0 10px rgba(226, 54, 54, 0.2);
+}
+
+.process-count::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: currentColor;
+}
+
+/* Input Table */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0 calc(-1 * var(--space-4));
+  padding: 0 var(--space-4);
+  -webkit-overflow-scrolling: touch;
+}
+
+.input-table {
+  width: 100%;
+  min-width: 400px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.input-table th {
+  padding: var(--space-3) var(--space-2);
+  text-align: center;
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border-strong);
+  white-space: nowrap;
+}
+
+.input-table th:first-child {
+  text-align: left;
+  padding-left: var(--space-3);
+}
+
+.input-table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.input-table td:first-child {
+  padding-left: var(--space-3);
+}
+
+.input-table td:last-child {
+  width: 48px;
+  padding-right: var(--space-3);
+}
+
+.input-table input {
+  width: 100%;
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #262626;
+  color: var(--text);
+  font-size: var(--text-sm);
+  text-align: center;
+  transition: var(--transition-fast);
+}
+
+.input-table input:focus {
+  outline: none;
+  border-color: var(--spidey-red);
+  box-shadow: 0 0 0 3px rgba(226, 54, 54, 0.2);
+}
+
+.input-table .name {
+  text-align: left;
+  font-weight: var(--font-semibold);
+}
+
+.input-table .name::placeholder {
+  color: var(--text-muted);
+}
+
+.input-table .del {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.input-table .del:hover {
+  background: var(--danger-soft);
+  border-color: var(--danger);
+  color: var(--danger);
+  transform: scale(1.1);
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.actions button {
+  height: 40px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.actions .secondary {
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.actions .secondary:hover {
+  background: var(--border-subtle);
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+
+.actions .danger {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-tertiary);
+}
+
+.actions .danger:hover {
+  background: var(--danger-soft);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* Simulation Actions */
+.simulation-actions {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border);
+}
+
+.simulation-actions button {
+  height: 56px;
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  cursor: pointer;
+  transition: var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  position: relative;
+  overflow: hidden;
+}
+
+.run-button {
+  background: linear-gradient(135deg, var(--spidey-red) 0%, var(--spidey-red-dark) 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 14px rgba(226, 54, 54, 0.4);
+}
+
+.run-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: 0.5s;
+}
+
+.run-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(226, 54, 54, 0.5), 0 0 30px rgba(226, 54, 54, 0.3);
+}
+
+.run-button:hover::before {
+  left: 100%;
+}
+
+.run-button:active {
+  transform: translateY(0);
+}
+
+.compare-button {
+  background: var(--panel-soft);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.compare-button:hover {
+  background: var(--border-subtle);
+  border-color: var(--spidey-blue);
+  color: var(--spidey-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+}
+
+.button-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* Messages */
+.msg {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+}
+
+.msg.success {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.error-box {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.error-title {
+  font-weight: var(--font-bold);
+  color: #EF4444;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.error-list {
+  margin: 0;
+  padding-left: var(--space-5);
+  color: #FCA5A5;
+  font-size: var(--text-sm);
+}
+
+.error-list li {
+  margin: var(--space-1) 0;
+}
+
+.input-error {
+  border-color: #EF4444 !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Results Section */
+.results-card {
+  min-height: 600px;
+}
+
+.results-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.results-header h2 {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.results-header h2::before {
+  display: none;
+}
+
+.results-title-group {
+  flex: 1;
+}
+
+.results-title-group h2 {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  margin-bottom: var(--space-1);
+}
+
+.results-subtitle {
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+}
+
+/* Status Badge */
+.results-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: var(--transition-fast);
+  white-space: nowrap;
+}
+
+.results-status span {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+}
+
+.results-status.waiting {
+  background: var(--panel-soft);
+  color: var(--text-tertiary);
+  border: 1px solid var(--border);
+}
+
+.results-status.waiting span {
+  background: var(--text-muted);
+}
+
+.results-status.ready {
+  background: rgba(226, 54, 54, 0.15);
+  color: var(--spidey-red);
+  border: 1px solid rgba(226, 54, 54, 0.5);
+  box-shadow: 0 0 10px rgba(226, 54, 54, 0.2);
+}
+
+.results-status.ready span {
+  background: var(--spidey-red);
+  animation: pulse-spidey 2s infinite;
+}
+
+.results-status.complete {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+.results-status.complete span {
+  background: #10B981;
+}
+
+.results-status.needs-update {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--spidey-gold);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+}
+
+.results-status.needs-update span {
+  background: var(--spidey-gold);
+}
+
+/* Empty State */
+.results-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-10) var(--space-6);
+  text-align: center;
+  background: var(--panel-soft);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.results-empty-icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(226, 54, 54, 0.15);
+  border-radius: var(--radius-lg);
+  color: var(--spidey-red);
+  font-size: 32px;
+}
+
+.results-empty strong {
+  font-size: var(--text-lg);
+  color: var(--text);
+  font-weight: var(--font-semibold);
+}
+
+.results-empty span {
+  max-width: 400px;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+/* Algorithm Badge */
+.algorithm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: rgba(226, 54, 54, 0.15);
+  border: 1px solid rgba(226, 54, 54, 0.5);
+  border-radius: var(--radius-full);
+  color: var(--spidey-red);
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  margin-bottom: var(--space-5);
+  box-shadow: 0 0 10px rgba(226, 54, 54, 0.2);
+}
+
+.algorithm-badge::before {
+  content: "🕷️";
+  font-size: 12px;
+}
+
+/* Metrics */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.metric {
+  position: relative;
+  padding: var(--space-5);
+  background: linear-gradient(145deg, var(--panel) 0%, var(--panel-soft) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-fast);
+  overflow: hidden;
+}
+
+.metric:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md), 0 0 20px rgba(226, 54, 54, 0.1);
+  border-color: rgba(226, 54, 54, 0.3);
+}
+
+.metric::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--spidey-red), var(--spidey-blue));
+}
+
+.metric-wait::before { opacity: 0.6; }
+.metric-turn::before { opacity: 0.8; }
+.metric-response::before { opacity: 1; }
+
+.metric-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.metric-label span {
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metric-badge {
+  padding: var(--space-1) var(--space-2);
+  background: rgba(226, 54, 54, 0.2);
+  border-radius: var(--radius-sm);
+  color: var(--spidey-red);
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+}
+
+.metric-value {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-3);
+  text-shadow: 0 0 20px rgba(226, 54, 54, 0.3);
+}
+
+.metric-desc {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  line-height: 1.5;
+}
+
+/* Gantt Chart */
+.gantt-section {
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.gantt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.gantt-header h3 {
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.gantt-legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.gantt-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.gantt-legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-sm);
+}
+
+.gantt-legend-color.process {
+  background: var(--process-1);
+}
+
+.gantt-legend-color.idle {
+  background: repeating-linear-gradient(
+    -45deg,
+    #333,
+    #333 4px,
+    #444 4px,
+    #444 8px
+  );
+}
+
+.gantt-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  padding: var(--space-5);
+  -webkit-overflow-scrolling: touch;
+}
+
+.gantt {
+  display: flex;
+  min-width: max-content;
+  align-items: stretch;
+  gap: 2px;
+  padding-bottom: var(--space-2);
+}
+
+.gantt-block {
+  height: 64px;
+  min-width: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-bold);
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-fast);
+  cursor: pointer;
+}
+
+.gantt-block:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 20px rgba(226, 54, 54, 0.3);
+  z-index: 10;
+}
+
+.gantt-block.process {
+  background: var(--process-1);
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.gantt-block.process:nth-child(8n+2) { background: var(--process-2); }
+.gantt-block.process:nth-child(8n+3) { background: var(--process-3); }
+.gantt-block.process:nth-child(8n+4) { background: var(--process-4); color: var(--spidey-black); text-shadow: none; }
+.gantt-block.process:nth-child(8n+5) { background: var(--process-5); }
+.gantt-block.process:nth-child(8n+6) { background: var(--process-6); }
+.gantt-block.process:nth-child(8n+7) { background: var(--process-7); }
+.gantt-block.process:nth-child(8n+8) { background: var(--process-8); color: var(--spidey-black); text-shadow: none; }
+
+.gantt-block.idle {
+  background: repeating-linear-gradient(
+    -45deg,
+    #2a2a2a,
+    #2a2a2a 8px,
+    #333 8px,
+    #333 16px
+  );
+  color: var(--text-tertiary);
+  border: 1px dashed var(--border-strong);
+}
+
+.gantt-block span {
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  padding: 0 var(--space-2);
+}
+
+.gantt-block small {
+  font-size: 10px;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+.gantt-axis {
+  display: flex;
+  min-width: max-content;
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border);
+  position: relative;
+}
+
+.axis-mark {
+  flex: 0 0 auto;
+  position: relative;
+  padding-top: var(--space-2);
+}
+
+.axis-mark::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 0;
+  width: 1px;
+  height: 6px;
+  background: var(--border-strong);
+}
+
+.axis-mark span {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-weight: var(--font-medium);
+}
+
+/* Results Table */
+.results-table-section {
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.results-table-section h3 {
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-4);
+}
+
+.results-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+}
+
+.results-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.results-table th {
+  padding: var(--space-3) var(--space-4);
+  text-align: center;
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+
+.results-table th.input-col {
+  background: var(--panel-soft);
+  color: var(--text-tertiary);
+}
+
+.results-table th.calc-col {
+  background: rgba(226, 54, 54, 0.15);
+  color: var(--spidey-red);
+}
+
+.results-table td {
+  padding: var(--space-3) var(--space-4);
+  text-align: center;
+  font-size: var(--text-sm);
+  border-bottom: 1px solid var(--border-subtle);
+  transition: var(--transition-fast);
+}
+
+.results-table tbody tr:hover td {
+  background: var(--panel-soft);
+}
+
+.results-table tbody tr:hover td.calc-col {
+  background: rgba(226, 54, 54, 0.1);
+}
+
+.results-table td:first-child {
+  font-weight: var(--font-semibold);
+  color: var(--text);
+}
+
+.results-table td.input-col {
+  color: var(--text-secondary);
+  background: var(--panel-soft);
+}
+
+.results-table td.calc-col {
+  font-weight: var(--font-semibold);
+  color: var(--spidey-red);
+  background: rgba(226, 54, 54, 0.05);
+}
+
+/* Compare Section */
+.compare {
+  margin-top: var(--space-6);
+}
+
+.compare-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.compare-header h2 {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.compare-header h2::before {
+  content: "🕸️";
+  font-size: 20px;
+  margin-right: var(--space-2);
+  filter: grayscale(1) brightness(2);
+}
+
+.compare-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+}
+
+.compare-table {
+  width: 100%;
+  min-width: 500px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.compare-table th {
+  padding: var(--space-4);
+  text-align: left;
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border);
+  background: var(--panel-soft);
+}
+
+.compare-table th:not(:first-child) {
+  text-align: center;
+}
+
+.compare-table td {
+  padding: var(--space-4);
+  text-align: left;
+  font-size: var(--text-sm);
+  border-bottom: 1px solid var(--border-subtle);
+  transition: var(--transition-fast);
+}
+
+.compare-table td:not(:first-child) {
+  text-align: center;
+  font-family: 'SF Mono', Monaco, monospace;
+  font-weight: var(--font-semibold);
+  color: var(--text-secondary);
+}
+
+.compare-table tbody tr:hover td {
+  background: var(--panel-soft);
+}
+
+.compare-table tbody tr:hover td:not(:first-child) {
+  color: var(--spidey-red);
+  text-shadow: 0 0 10px rgba(226, 54, 54, 0.3);
+}
+
+.compare-table td:first-child {
+  font-weight: var(--font-semibold);
+  color: var(--text);
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--border-subtle);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--spidey-red);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .metrics {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .wrap {
+    padding: var(--space-4);
+  }
+  
+  .hero {
+    padding: var(--space-5);
+  }
+  
+  .hero::before {
+    font-size: 100px;
+    opacity: 0.05;
+  }
+  
+  .card {
+    padding: var(--space-5);
+  }
+  
+  .metrics {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  
+  .metric {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-2);
+    align-items: center;
+  }
+  
+  .metric-label {
+    margin: 0;
+    grid-column: 1;
+  }
+  
+  .metric-value {
+    margin: 0;
+    grid-column: 2;
+    font-size: 28px;
+  }
+  
+  .metric-desc {
+    grid-column: 1 / -1;
+  }
+  
+  .simulation-actions {
+    grid-template-columns: 1fr;
+  }
+  
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .results-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  
+  .results-status {
+    align-self: flex-start;
+  }
+  
+  .gantt-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  
+  .actions {
+    flex-direction: column;
+  }
+  
+  .actions button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .process-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  
+  .process-count {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --space-6: 20px;
+    --space-5: 16px;
+    --space-4: 12px;
+  }
+  
+  .hero h1 {
+    font-size: 24px;
+  }
+  
+  .algorithm-tags {
+    gap: var(--space-1);
+  }
+  
+  .algorithm-tags span {
+    padding: var(--space-1) var(--space-2);
+    font-size: 10px;
+  }
+  
+  .card {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+  }
+  
+  .metric-value {
+    font-size: 24px;
+  }
+  
+  .input-table th,
+  .input-table td {
+    padding: var(--space-2);
+  }
+  
+  .input-table input {
+    min-height: 36px;
+    padding: var(--space-1) var(--space-2);
+  }
+  
+  .gantt-block {
+    height: 48px;
+    min-width: 40px;
+  }
+  
+  .gantt-block span {
+    font-size: var(--text-xs);
+  }
+  
+  .gantt-block small {
+    font-size: 9px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .hero,
+  .simulation-actions,
+  .actions,
+  .process-section,
+  .compare {
+    display: none;
+  }
+  
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .results-card {
+    box-shadow: none;
+    border: 1px solid #000;
+    background: white;
+  }
+  
+  .gantt-container,
+  .results-table-wrap {
+    overflow: visible;
+  }
+}
+
+/* Focus visible for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--spidey-red);
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
 </head>
 <body>
-  <div class="app">
-    <div class="hero-card">
-      <h1>System Of Non-linear Equation – Quadratic Equation</h1>
-      <p>
-        Enter two equations in terms of <strong>x</strong> and <strong>y</strong>.
-        Use <strong>*</strong> for multiplication and <strong>^</strong> for powers.
-      </p>
-      <div class="example">
-        Example:
-        <span>x^2 + y^2 = 5</span>
-        <span>3*x^2 - 2*y^2 = 10</span>
+<div class="wrap" id="app">
+  <header class="hero">
+    <div class="hero-top">
+      <div class="eyebrow">
+        <span class="spider-icon">🕷️</span>
+        Spider-Verse Scheduler
       </div>
-      <div class="card-author-header">
-    Francis Jhon M. Ramao<br>
-    Jhorrim O. Calderon
-  </div>
+      <div class="status-pill">
+        <span></span>
+        Ready
+      </div>
     </div>
+    <h1>Web-Sling Your Processes</h1>
+    <p>Simulate, analyze, and compare CPU scheduling algorithms with the speed and precision of your friendly neighborhood Spider-Man.</p>
+    <div class="algorithm-tags">
+      <span>FCFS</span>
+      <span>SJF</span>
+      <span>SRTF</span>
+      <span>Round Robin</span>
+      <span>Priority</span>
+    </div>
+  </header>
 
-    <div class="panel input-panel">
-      <div class="card-author-corner">
-  Francis Jhon M. Ramao<br>
-  Jhorrim O. Calderon
-</div>
-      <h2>Equation Input</h2>
-      <label for="eq1">Equation 1</label>
-      <input id="eq1" type="text" placeholder="e.g. x^2 + y^2 = 5" />
+  <div class="layout">
+    <section class="card setup-card">
+      <h2>Simulation Setup</h2>
+      
+      <div class="controls">
+        <div class="field algorithm-field">
+          <label>Scheduling Algorithm</label>
+          <div class="algorithm-control">
+            <div class="algorithm-icon">🕸️</div>
+            <select id="algorithm">
+              <option value="FCFS">First-Come, First-Served (FCFS)</option>
+              <option value="SJF">Shortest Job First (SJF)</option>
+              <option value="SRTF">Shortest Remaining Time First (SRTF)</option>
+              <option value="RR">Round Robin (RR)</option>
+              <option value="PRIORITY">Priority Scheduling</option>
+            </select>
+          </div>
+          <div class="algorithm-hint" id="algorithmHint">Processes execute in the order they arrive.</div>
+        </div>
 
-      <label for="eq2">Equation 2</label>
-      <input id="eq2" type="text" placeholder="e.g. 3*x^2 - 2*y^2 = 10" />
-
-      <div class="btn-row">
-        <button id="solveBtn" class="btn primary">Solve System</button>
-        <button id="clearBtn" class="btn secondary">Clear</button>
+        <div class="settings-grid">
+          <div class="setting-card" id="quantumCard">
+            <label>Time Quantum</label>
+            <input id="quantum" type="number" min="1" step="1" value="2">
+            <small>For Round Robin only</small>
+          </div>
+          <div class="setting-card" id="priorityCard">
+            <label>Priority Rule</label>
+            <select id="priorityRule">
+              <option value="small">Lower number = Higher priority</option>
+              <option value="large">Higher number = Higher priority</option>
+            </select>
+            <small>For Priority scheduling</small>
+          </div>
+        </div>
       </div>
 
-      <p class="note">
-        Supported examples: <code>x^2 + y^2 = 5</code>,
-        <code>x + y^2 = 7</code>, <code>sin(x) + y = 1</code>
-      </p>
+      <div class="process-section">
+        <div class="process-header">
+          <div>
+            <h3>Process Input</h3>
+            <p>Define processes with arrival time, burst time, and priority.</p>
+          </div>
+          <div class="process-count" id="processCount">0 Processes</div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="input-table">
+            <thead>
+              <tr>
+                <th>Process</th>
+                <th>Arrival</th>
+                <th>Burst</th>
+                <th>Priority</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="actions">
+          <button class="secondary" id="add">+ Add Process</button>
+          <button class="secondary" id="sample">Load Sample</button>
+          <button class="danger" id="clear">Clear All</button>
+        </div>
+
+        <div class="msg" id="msg" aria-live="polite"></div>
+      </div>
+
+      <div class="simulation-actions">
+        <button class="run-button" id="run">
+          <span class="button-icon">🕷️</span>
+          <span>Run Simulation</span>
+        </button>
+        <button class="compare-button" id="compare">
+          <span class="button-icon">🕸️</span>
+          <span>Compare All</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="card results-card">
+      <div class="results-header">
+        <div class="results-title-group">
+          <h2>Results</h2>
+          <p class="results-subtitle">Execution timeline and performance metrics</p>
+        </div>
+        <div class="results-status waiting" id="resultsStatus">
+          <span></span>
+          Waiting
+        </div>
+      </div>
+
+      <div id="results">
+        <div class="results-empty">
+          <div class="results-empty-icon">🕷️</div>
+          <strong>No simulation results</strong>
+          <span>Add processes and run a simulation to see the Gantt chart and performance metrics.</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="card compare" id="compareCard" style="display:none">
+    <div class="compare-header">
+      <h2>Algorithm Comparison</h2>
     </div>
-
-<div class="panel result-card">
-  <div class="card-header">
-    <h2>Solution</h2>
-    <span class="card-author-mini">Francis Jhon M. Ramao<br>
-    Jhorrim O. Calderon</span>
-  </div>
-
-  <div id="steps" class="result-content muted">No steps yet.</div>
-</div>
-
-    <div class="results-grid">
-     <div class="panel result-card">
-  <div class="card-header">
-    <h2>Detected Type</h2>
-    <span class="card-author-mini">Francis Jhon M. Ramao<br>
-    Jhorrim O. Calderon</span>
-  </div>
-
-  <div id="detectedType" class="result-content muted">Waiting for input...</div>
-</div>
-
-      <div class="panel result-card">
-  <div class="card-header">
-    <h2>Answers</h2>
-    <span class="card-author-mini">Francis Jhon M. Ramao<br>
-    Jhorrim O. Calderon</span>
-  </div>
-  <div id="answers" class="result-content muted">No solutions yet.</div>
-</div>
-
-      <div class="panel result-card">
-  <div class="card-header">
-    <h2>Checking</h2>
-    <span class="card-author-mini">Francis Jhon M. Ramao<br>
-    Jhorrim O. Calderon</span>
-  </div>
-
-  <div id="verification" class="result-content muted">No checking yet.</div>
-</div>
+    <div class="compare-table-wrap">
+      <table class="compare-table" id="compareTable"></table>
     </div>
-  </div>
+  </section>
+</div>
 
-  <script src="script.js"></script>
+<script>
+(function () {
+"use strict";
+
+const $ = (id) => document.getElementById(id);
+const tbody = $("tbody");
+const msg = $("msg");
+const results = $("results");
+const compareCard = $("compareCard");
+const resultsStatus = $("resultsStatus");
+
+function updateProcessCount() {
+  const count = tbody.children.length;
+  const processCount = $("processCount");
+  processCount.textContent = count === 1 ? "1 Process" : count + " Processes";
+  processCount.classList.toggle("has-processes", count > 0);
+}
+
+function addRow(p = {}) {
+  const tr = document.createElement("tr");
+  const n = p.name || "P" + (tbody.children.length + 1);
+  tr.innerHTML = 
+    '<td><input class="name" value="' + n + '" placeholder="P1"></td>' +
+    '<td><input class="at" type="number" min="0" step="1" value="' + (p.at ?? 0) + '"></td>' +
+    '<td><input class="bt" type="number" min="1" step="1" value="' + (p.bt ?? 1) + '"></td>' +
+    '<td><input class="pr" type="number" step="1" value="' + (p.pr ?? 1) + '"></td>' +
+    '<td><button class="del" type="button" aria-label="Delete process">×</button></td>';
+  
+  tr.querySelector(".del").addEventListener("click", () => {
+    tr.remove();
+    clearFieldErrors();
+    msg.className = "msg";
+    msg.textContent = "";
+    invalidateResults();
+    updateProcessCount();
+  });
+  
+  tbody.appendChild(tr);
+  updateProcessCount();
+}
+
+function loadSample() {
+  tbody.innerHTML = "";
+  [[0, 8, 2], [1, 4, 1], [2, 2, 3], [3, 5, 2], [4, 3, 1]].forEach((x, i) => {
+    addRow({ name: "P" + (i + 1), at: x[0], bt: x[1], pr: x[2] });
+  });
+  validateAll();
+}
+
+function showEmptyState(title, subtitle, icon) {
+  icon = icon || "🕷️";
+  results.innerHTML = 
+    '<div class="results-empty">' +
+      '<div class="results-empty-icon">' + icon + '</div>' +
+      '<strong>' + title + '</strong>' +
+      '<span>' + subtitle + '</span>' +
+    '</div>';
+}
+
+function invalidateResults() {
+  const currentStatus = resultsStatus.classList.contains("complete") ? "complete" : "waiting";
+  if (currentStatus === "complete") {
+    setResultsStatus("needs-update");
+    showEmptyState("Results Outdated", "Input has changed. Run the simulation again to see updated results.", "🕸️");
+  } else {
+    setResultsStatus("waiting");
+    showEmptyState("No Simulation Results", "Add processes and run a simulation to see the Gantt chart and performance metrics.", "🕷️");
+  }
+  compareCard.style.display = "none";
+}
+
+function setResultsStatus(status) {
+  resultsStatus.className = "results-status " + status;
+  const labels = {
+    "waiting": "Waiting",
+    "ready": "Ready",
+    "complete": "Complete",
+    "needs-update": "Needs Update"
+  };
+  resultsStatus.innerHTML = "<span></span> " + labels[status];
+}
+
+function clearFieldErrors() {
+  tbody.querySelectorAll("input").forEach(input => input.classList.remove("input-error"));
+  $("quantum").classList.remove("input-error");
+}
+
+function addValidationError(errors, row, input, message) {
+  input.classList.add("input-error");
+  errors.push({ row: row + 1, message });
+}
+
+function validateProcesses() {
+  const rows = Array.from(tbody.children);
+  const errors = [];
+  const processes = [];
+  const names = new Map();
+
+  clearFieldErrors();
+
+  if (!rows.length) {
+    errors.push({ row: null, message: "Add at least one process." });
+    return { errors, processes };
+  }
+
+  rows.forEach((row, index) => {
+    const nameInput = row.querySelector(".name");
+    const atInput = row.querySelector(".at");
+    const btInput = row.querySelector(".bt");
+    const prInput = row.querySelector(".pr");
+
+    const name = nameInput.value.trim();
+    const atRaw = atInput.value.trim();
+    const btRaw = btInput.value.trim();
+    const prRaw = prInput.value.trim();
+
+    const at = Number(atRaw);
+    const bt = Number(btRaw);
+    const pr = Number(prRaw);
+
+    let valid = true;
+
+    if (!name) {
+      addValidationError(errors, index, nameInput, "Process name is required.");
+      valid = false;
+    }
+
+    if (atRaw === "") {
+      addValidationError(errors, index, atInput, "Arrival time is required.");
+      valid = false;
+    } else if (!Number.isInteger(at) || at < 0) {
+      addValidationError(errors, index, atInput, "Arrival time must be a non-negative integer.");
+      valid = false;
+    }
+
+    if (!Number.isInteger(bt) || bt <= 0) {
+      addValidationError(errors, index, btInput, "Burst time must be a positive integer.");
+      valid = false;
+    }
+
+    if (prRaw === "") {
+      addValidationError(errors, index, prInput, "Priority is required.");
+      valid = false;
+    } else if (!Number.isInteger(pr)) {
+      addValidationError(errors, index, prInput, "Priority must be an integer.");
+      valid = false;
+    }
+
+    if (name) {
+      if (!names.has(name)) names.set(name, []);
+      names.get(name).push({ row: index, input: nameInput });
+    }
+
+    if (valid) {
+      processes.push({ name, at, bt, pr, idx: index });
+    }
+  });
+
+  names.forEach((entries, name) => {
+    if (entries.length > 1) {
+      entries.forEach(entry => {
+        entry.input.classList.add("input-error");
+        errors.push({ row: entry.row + 1, message: 'Duplicate process name: "' + name + '"' });
+      });
+    }
+  });
+
+  return { errors, processes };
+}
+
+function showValidationErrors(errors) {
+  msg.classList.remove("success");
+  if (!errors.length) {
+    msg.className = "msg success";
+    msg.textContent = "✓ Simulation ";
+    return;
+  }
+
+  const title = errors.length === 1 ? "1 Error Found" : errors.length + " Errors Found";
+  const list = errors.map(error => {
+    const prefix = error.row === null ? "" : "Row " + error.row + ": ";
+    return "<li>" + prefix + error.message + "</li>";
+  }).join("");
+
+  msg.className = "msg";
+  msg.innerHTML = 
+    '<div class="error-box">' +
+      '<div class="error-title">' + title + '</div>' +
+      '<ul class="error-list">' + list + '</ul>' +
+    '</div>';
+}
+
+function validateAll() {
+  const result = validateProcesses();
+  const errors = result.errors;
+  const algorithm = $("algorithm").value;
+
+  if (algorithm === "RR") {
+    const quantumInput = $("quantum");
+    const quantum = Number(quantumInput.value);
+    quantumInput.classList.remove("input-error");
+    if (!Number.isInteger(quantum) || quantum < 1) {
+      quantumInput.classList.add("input-error");
+      errors.push({ row: null, message: "Time quantum must be a positive integer." });
+    }
+  } else {
+    $("quantum").classList.remove("input-error");
+  }
+
+  showValidationErrors(errors);
+
+  if (errors.length === 0) {
+    setResultsStatus("ready");
+  } else {
+    setResultsStatus("waiting");
+  }
+
+  return { valid: errors.length === 0, processes: result.processes };
+}
+
+function addSegment(g, name, start, end) {
+  if (end <= start) return;
+  const last = g[g.length - 1];
+  if (last && last.name === name && last.end === start) {
+    last.end = end;
+  } else {
+    g.push({ name, start, end });
+  }
+}
+
+function finalize(processes) {
+  return processes.map(p => {
+    const tat = p.ct - p.at;
+    const wt = tat - p.bt;
+    const rt = p.firstStart - p.at;
+    return { ...p, tat, wt, rt };
+  });
+}
+
+function fcfs(input) {
+  const ps = input.map(p => ({...p})).sort((a, b) => a.at - b.at || a.idx - b.idx);
+  let t = 0;
+  const g = [];
+  for (const p of ps) {
+    if (t < p.at) {
+      addSegment(g, "IDLE", t, p.at);
+      t = p.at;
+    }
+    p.firstStart = t;
+    p.ct = t + p.bt;
+    addSegment(g, p.name, t, p.ct);
+    t = p.ct;
+  }
+  return { ps: finalize(ps), g };
+}
+
+function sjf(input) {
+  const ps = input.map(p => ({...p}));
+  const g = [];
+  const done = new Set();
+  let t = 0;
+  let completed = 0;
+  while (completed < ps.length) {
+    let ready = ps.filter(p => !done.has(p.idx) && p.at <= t);
+    if (!ready.length) {
+      const next = ps.filter(p => !done.has(p.idx)).sort((a, b) => a.at - b.at || a.idx - b.idx)[0];
+      addSegment(g, "IDLE", t, next.at);
+      t = next.at;
+      continue;
+    }
+    ready.sort((a, b) => a.bt - b.bt || a.at - b.at || a.idx - b.idx);
+    const p = ready[0];
+    p.firstStart = t;
+    p.ct = t + p.bt;
+    addSegment(g, p.name, t, p.ct);
+    t = p.ct;
+    done.add(p.idx);
+    completed++;
+  }
+  return { ps: finalize(ps), g };
+}
+
+function srtf(input) {
+  const ps = input.map(p => ({...p, remaining: p.bt}));
+  const g = [];
+  let t = 0;
+  let completed = 0;
+  while (completed < ps.length) {
+    let ready = ps.filter(p => p.remaining > 0 && p.at <= t);
+    if (!ready.length) {
+      const next = ps.filter(p => p.remaining > 0).sort((a, b) => a.at - b.at || a.idx - b.idx)[0];
+      addSegment(g, "IDLE", t, next.at);
+      t = next.at;
+      continue;
+    }
+    ready.sort((a, b) => a.remaining - b.remaining || a.at - b.at || a.idx - b.idx);
+    const p = ready[0];
+    if (p.firstStart === undefined) p.firstStart = t;
+    const future = ps.filter(x => x.remaining > 0 && x.at > t).sort((a, b) => a.at - b.at || a.idx - b.idx)[0];
+    const end = future ? Math.min(t + p.remaining, future.at) : t + p.remaining;
+    addSegment(g, p.name, t, end);
+    p.remaining -= (end - t);
+    t = end;
+    if (p.remaining === 0) {
+      p.ct = t;
+      completed++;
+    }
+  }
+  return { ps: finalize(ps), g };
+}
+
+function roundRobin(input, quantum) {
+  const ps = input.map(p => ({...p, remaining: p.bt})).sort((a, b) => a.at - b.at || a.idx - b.idx);
+  const g = [];
+  const queue = [];
+  let t = 0;
+  let i = 0;
+  let completed = 0;
+  while (completed < ps.length) {
+    if (queue.length === 0) {
+      if (i < ps.length && t < ps[i].at) {
+        addSegment(g, "IDLE", t, ps[i].at);
+        t = ps[i].at;
+      }
+      while (i < ps.length && ps[i].at <= t) {
+        queue.push(ps[i++]);
+      }
+    }
+    const p = queue.shift();
+    if (p.firstStart === undefined) p.firstStart = t;
+    const run = Math.min(quantum, p.remaining);
+    addSegment(g, p.name, t, t + run);
+    p.remaining -= run;
+    t += run;
+    while (i < ps.length && ps[i].at <= t) {
+      queue.push(ps[i++]);
+    }
+    if (p.remaining > 0) {
+      queue.push(p);
+    } else {
+      p.ct = t;
+      completed++;
+    }
+  }
+  return { ps: finalize(ps), g };
+}
+
+function prioritySched(input, rule) {
+  const ps = input.map(p => ({...p}));
+  const g = [];
+  const done = new Set();
+  let t = 0;
+  let completed = 0;
+  while (completed < ps.length) {
+    let ready = ps.filter(p => !done.has(p.idx) && p.at <= t);
+    if (!ready.length) {
+      const next = ps.filter(p => !done.has(p.idx)).sort((a, b) => a.at - b.at || a.idx - b.idx)[0];
+      addSegment(g, "IDLE", t, next.at);
+      t = next.at;
+      continue;
+    }
+    ready.sort((a, b) => {
+      const priorityDiff = rule === "small" ? a.pr - b.pr : b.pr - a.pr;
+      return priorityDiff || a.at - b.at || a.idx - b.idx;
+    });
+    const p = ready[0];
+    p.firstStart = t;
+    p.ct = t + p.bt;
+    addSegment(g, p.name, t, p.ct);
+    t = p.ct;
+    done.add(p.idx);
+    completed++;
+  }
+  return { ps: finalize(ps), g };
+}
+
+function simulate(ps, algorithm) {
+  if (algorithm === "FCFS") return fcfs(ps);
+  if (algorithm === "SJF") return sjf(ps);
+  if (algorithm === "SRTF") return srtf(ps);
+  if (algorithm === "RR") return roundRobin(ps, Number($("quantum").value));
+  return prioritySched(ps, $("priorityRule").value);
+}
+
+function average(ps, key) {
+  return ps.reduce((sum, p) => sum + p[key], 0) / ps.length;
+}
+
+function render(r, title) {
+  setResultsStatus("complete");
+  
+  const colors = [
+    "var(--process-1)", "var(--process-2)", "var(--process-3)", "var(--process-4)",
+    "var(--process-5)", "var(--process-6)", "var(--process-7)", "var(--process-8)"
+  ];
+  const colorMap = {};
+  r.ps.forEach((p, i) => colorMap[p.name] = colors[i % colors.length]);
+  
+  const timeScale = 60;
+  
+  const ganttBlocks = r.g.map(x => {
+    const duration = x.end - x.start;
+    const width = Math.max(duration * timeScale, 40);
+    const isIdle = x.name === "IDLE";
+    
+    return '<div class="gantt-block ' + (isIdle ? 'idle' : 'process') + '" ' +
+      'style="width:' + width + 'px" ' +
+      'title="' + x.name + ': ' + x.start + '–' + x.end + '">' +
+        '<span>' + x.name + '</span>' +
+        '<small>' + x.start + '–' + x.end + '</small>' +
+      '</div>';
+  }).join("");
+  
+  const axisMarks = r.g.map((x, i) => {
+    const duration = x.end - x.start;
+    const width = Math.max(duration * timeScale, 40);
+    return '<div class="axis-mark" style="width:' + width + 'px"><span>' + x.start + '</span></div>';
+  }).join("") + (r.g.length ? 
+    '<div class="axis-mark" style="width:0"><span>' + r.g[r.g.length - 1].end + '</span></div>' : '');
+  
+  const tableRows = r.ps.map(p => 
+    '<tr>' +
+      '<td class="input-col">' + p.name + '</td>' +
+      '<td class="input-col">' + p.at + '</td>' +
+      '<td class="input-col">' + p.bt + '</td>' +
+      '<td class="input-col">' + p.pr + '</td>' +
+      '<td class="calc-col">' + p.ct + '</td>' +
+      '<td class="calc-col">' + p.tat + '</td>' +
+      '<td class="calc-col">' + p.wt + '</td>' +
+      '<td class="calc-col">' + p.rt + '</td>' +
+    '</tr>'
+  ).join("");
+  
+  results.innerHTML = 
+    '<div class="algorithm-badge">' + title + '</div>' +
+    
+    '<div class="metrics">' +
+      '<div class="metric metric-wait">' +
+        '<div class="metric-label">' +
+          '<span>Average Waiting Time</span>' +
+          '<span class="metric-badge">WT</span>' +
+        '</div>' +
+        '<div class="metric-value">' + average(r.ps, "wt").toFixed(2) + '</div>' +
+        '<div class="metric-desc">Time spent waiting in ready queue</div>' +
+      '</div>' +
+      '<div class="metric metric-turn">' +
+        '<div class="metric-label">' +
+          '<span>Average Turnaround</span>' +
+          '<span class="metric-badge">TAT</span>' +
+        '</div>' +
+        '<div class="metric-value">' + average(r.ps, "tat").toFixed(2) + '</div>' +
+        '<div class="metric-desc">Total time from arrival to completion</div>' +
+      '</div>' +
+      '<div class="metric metric-response">' +
+        '<div class="metric-label">' +
+          '<span>Average Response</span>' +
+          '<span class="metric-badge">RT</span>' +
+        '</div>' +
+        '<div class="metric-value">' + average(r.ps, "rt").toFixed(2) + '</div>' +
+        '<div class="metric-desc">Time until first CPU execution</div>' +
+      '</div>' +
+    '</div>' +
+    
+    '<div class="gantt-section">' +
+      '<div class="gantt-header">' +
+        '<h3>Execution Timeline</h3>' +
+        '<div class="gantt-legend">' +
+          '<div class="gantt-legend-item">' +
+            '<div class="gantt-legend-color process"></div>' +
+            '<span>Process</span>' +
+          '</div>' +
+          '<div class="gantt-legend-item">' +
+            '<div class="gantt-legend-color idle"></div>' +
+            '<span>CPU Idle</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="gantt-container">' +
+        '<div class="gantt">' + ganttBlocks + '</div>' +
+        '<div class="gantt-axis">' + axisMarks + '</div>' +
+      '</div>' +
+    '</div>' +
+    
+    '<div class="results-table-section">' +
+      '<h3>Process Metrics</h3>' +
+      '<div class="results-table-wrap">' +
+        '<table class="results-table">' +
+          '<thead>' +
+            '<tr>' +
+              '<th class="input-col">Process</th>' +
+              '<th class="input-col">Arrival</th>' +
+              '<th class="input-col">Burst</th>' +
+              '<th class="input-col">Priority</th>' +
+              '<th class="calc-col">Completion</th>' +
+              '<th class="calc-col">Turnaround</th>' +
+              '<th class="calc-col">Waiting</th>' +
+              '<th class="calc-col">Response</th>' +
+            '</tr>' +
+          '</thead>' +
+          '<tbody>' + tableRows + '</tbody>' +
+        '</table>' +
+      '</div>' +
+    '</div>';
+}
+
+$("add").addEventListener("click", () => {
+  addRow();
+  msg.className = "msg";
+  msg.textContent = "";
+  invalidateResults();
+});
+
+$("sample").addEventListener("click", () => {
+  loadSample();
+  msg.className = "msg";
+  msg.textContent = "";
+  invalidateResults();
+});
+
+$("clear").addEventListener("click", () => {
+  tbody.innerHTML = "";
+  updateProcessCount();
+  showEmptyState("No Processes", "Add processes or load sample data to begin.", "🕷️");
+  compareCard.style.display = "none";
+  msg.className = "msg";
+  msg.textContent = "";
+  clearFieldErrors();
+  setResultsStatus("waiting");
+});
+
+tbody.addEventListener("input", event => {
+  const input = event.target;
+  if (input.matches("input")) {
+    input.classList.remove("input-error");
+  }
+  msg.className = "msg";
+  msg.textContent = "";
+  invalidateResults();
+});
+
+$("quantum").addEventListener("input", () => {
+  $("quantum").classList.remove("input-error");
+  msg.className = "msg";
+  msg.textContent = "";
+  invalidateResults();
+});
+
+$("run").addEventListener("click", () => {
+  const validation = validateAll();
+  if (!validation.valid) return;
+  
+  const ps = validation.processes;
+  const algorithm = $("algorithm").value;
+  const titles = {
+    FCFS: "First-Come, First-Served",
+    SJF: "Shortest Job First",
+    SRTF: "Shortest Remaining Time First",
+    RR: "Round Robin (Q=" + $("quantum").value + ")",
+    PRIORITY: "Priority Scheduling"
+  };
+  
+  render(simulate(ps, algorithm), titles[algorithm]);
+});
+
+$("compare").addEventListener("click", () => {
+  const validation = validateAll();
+  if (!validation.valid) return;
+
+  const ps = validation.processes;
+
+  const algorithms = [
+    ["FCFS", "FCFS"],
+    ["SJF", "SJF"],
+    ["SRTF", "SRTF"],
+    ["RR", "Round Robin"],
+    ["PRIORITY", "Priority"]
+  ];
+
+  const rows = algorithms.map(([key, name]) => {
+    const r = simulate(ps, key);
+
+    const waiting = average(r.ps, "wt").toFixed(2);
+    const turnaround = average(r.ps, "tat").toFixed(2);
+    const response = average(r.ps, "rt").toFixed(2);
+
+    return (
+      "<tr>" +
+        "<td>" + name + "</td>" +
+        "<td>" + waiting + "</td>" +
+        "<td>" + turnaround + "</td>" +
+        "<td>" + response + "</td>" +
+      "</tr>"
+    );
+  }).join("");
+
+  $("compareTable").innerHTML =
+    "<thead>" +
+      "<tr>" +
+        "<th>Algorithm</th>" +
+        "<th>Avg Waiting</th>" +
+        "<th>Avg Turnaround</th>" +
+        "<th>Avg Response</th>" +
+      "</tr>" +
+    "</thead>" +
+    "<tbody>" +
+      rows +
+    "</tbody>";
+
+  compareCard.style.display = "block";
+
+  compareCard.scrollIntoView({
+    behavior: "smooth",
+    block: "nearest"
+  });
+
+  setResultsStatus("complete");
+});
+
+function updateAlgorithmSettings() {
+  const algorithm = $("algorithm").value;
+  const quantumCard = $("quantumCard");
+  const priorityCard = $("priorityCard");
+  const hint = $("algorithmHint");
+  
+  const hints = {
+    FCFS: "Processes execute in the order they arrive.",
+    SJF: "Shortest job is selected from available processes.",
+    SRTF: "Process with shortest remaining time runs next.",
+    RR: "Each process gets a fixed time slice (quantum).",
+    PRIORITY: "Highest priority ready process runs next."
+  };
+  
+  hint.textContent = hints[algorithm];
+  
+  const isRR = algorithm === "RR";
+  const isPriority = algorithm === "PRIORITY";
+  
+  $("quantum").disabled = !isRR;
+  $("priorityRule").disabled = !isPriority;
+  
+  quantumCard.classList.toggle("active", isRR);
+  quantumCard.classList.toggle("inactive", !isRR);
+  
+  priorityCard.classList.toggle("active", isPriority);
+  priorityCard.classList.toggle("inactive", !isPriority);
+}
+
+$("algorithm").addEventListener("change", updateAlgorithmSettings);
+
+// Initialize
+loadSample();
+updateAlgorithmSettings();
+})();
+document.getElementById('algorithm').setAttribute('data-theme', 'dark');
+</script>
 </body>
 </html>
